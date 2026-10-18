@@ -1,0 +1,23 @@
+{
+  "name": "binnacle",
+  "version": "0.6.0",
+  "description": "All-in-one Claude Code mod: an adaptive status line whose model and effort open Claude Code's pickers, guards for risky commands, a record of what each turn and agent did, transcript search, and an interface for plugins.",
+  "author": { "name": "ma_k" },
+  "license": "MIT",
+  "keywords": ["claude-code", "mod", "statusline", "guard", "activity", "diff", "search", "plugins"],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "status_enabled": {
+      "type": "boolean",
+      "title": "binnacle: status line",
+      "description": "Draw binnacle's adaptive status line below the prompt.",
+      "default": true
+    },
+    "guard_enabled": {
+      "type": "boolean",
+      "title": "binnacle: guard",
+      "description": "Check risky commands (deletes, force pushes, cluster-wide kubectl, unbounded SQL) before they run.",
+      "default": true
+    }
+  }
+}
