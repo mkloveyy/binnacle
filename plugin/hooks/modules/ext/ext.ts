@@ -43,6 +43,17 @@ const COLOR = /^(#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|[A-Za-z][A-Za
 
 const isRow = (r: unknown): r is BinnacleTabRow => typeof r === 'object' && r !== null && !Array.isArray(r)
 
+/**
+ * A new item's place: after every item of a plugin whose name sorts at or before its own. Plugins load in an order
+ * the person's setup decides (measured: the reverse of the --plugin-dir order), so binnacle orders what they add by
+ * name, and a plugin's own items by when it added them; footer buttons, tabs and their hotkeys stay put.
+ */
+function placed<T extends { plugin: string }>(list: readonly T[], item: T): T[] {
+  let at = list.length
+  while (at > 0 && (list[at - 1] as T).plugin > item.plugin) at--
+  return [...list.slice(0, at), item, ...list.slice(at)]
+}
+
 /** One plugin's attention item: the same id replaces, empty text clears, at most three per plugin. */
 export function setAttention(list: BinnacleAttentionItem[], plugin: string, args: { id: string; level: string; text: string }): ExtResult<BinnacleAttentionItem> {
   const id = asId(args.id)
@@ -53,7 +64,7 @@ export function setAttention(list: BinnacleAttentionItem[], plugin: string, args
     return { ok: false, reason: `binnacle: ${plugin} already shows ${MAX_ATTENTION} attention items; clear one (empty text) first.` }
   }
   const level = LEVELS.find(l => l === args.level) ?? 'info'
-  return { ok: true, list: [...rest, { plugin, id, level, text }] }
+  return { ok: true, list: placed(rest, { plugin, id, level, text }) }
 }
 
 const countNodes = (rows: readonly unknown[]): number => rows.reduce((n: number, r) => (isRow(r) ? n + 1 + countNodes(Array.isArray(r.children) ? r.children : []) : n), 0)
@@ -107,7 +118,7 @@ export function setTab(list: BinnacleExtTab[], plugin: string, args: { id: strin
     rows: dropped ? [...rows, { text: `… ${dropped} more rows not shown`, dim: true }] : rows,
   }
   const at = list.findIndex(x => x.plugin === plugin && x.id === id)
-  return { ok: true, list: at >= 0 ? list.map((x, i) => (i === at ? tab : x)) : [...rest, tab] }
+  return { ok: true, list: at >= 0 ? list.map((x, i) => (i === at ? tab : x)) : placed(rest, tab) }
 }
 
 export const tabKey = (t: { plugin: string; id: string }): `ext:${string}` => `ext:${t.plugin}/${t.id}`
@@ -141,7 +152,7 @@ function upsert<T extends { plugin: string; id: string }>(list: readonly T[], pl
   if (at < 0 && rest.filter(x => x.plugin === plugin).length >= max) {
     return { ok: false, reason: `binnacle: ${plugin} already has ${max} ${what}; remove one first.` }
   }
-  return { ok: true, list: at >= 0 ? list.map((x, i) => (i === at ? item : x)) : [...rest, item] }
+  return { ok: true, list: at >= 0 ? list.map((x, i) => (i === at ? item : x)) : placed(rest, item) }
 }
 
 /** Spans as binnacle draws them: whitespace runs as one space, control characters visible, at most `max` characters in all. */
@@ -249,9 +260,9 @@ export type Registry = {
 
 export const emptyRegistry = (): Registry => ({ attention: [], tabs: [], buttons: [], segments: [], lines: [], settings: [], guards: [] })
 
-/** Every plugin that registered something the person can turn off, first seen first. */
+/** Every plugin that registered something the person can turn off, by name (as everything they add is ordered). */
 export const pluginsIn = (r: Registry): string[] =>
-  [...new Set([...r.attention, ...r.tabs, ...r.buttons, ...r.segments, ...r.lines, ...r.settings].map(x => x.plugin))]
+  [...new Set([...r.attention, ...r.tabs, ...r.buttons, ...r.segments, ...r.lines, ...r.settings].map(x => x.plugin))].sort()
 
 /**
  * A plugin tab's rows laid out in `width` columns: the rows of one level with the same number of cells line up

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.1
+
+- **Plugins' buttons, tabs, parts and lines are ordered by plugin name**, each plugin's own in the order it added them. Plugins load in an order each person's setup decides (measured: the reverse of the `--plugin-dir` order), so a tab's hotkey could change between sessions; Settings → Plugins lists them by name too.
+- The manifest's author reads `Mark`.
+
 ## 0.6.0
 
 - **A plugin interface:** other plugins add to binnacle through `$.binnacle`: `version`, `button` (the footer's right), `segment` (a part of the status line, dropped first when it is short of room), `line` (a line under it, from forms wide to narrow), `setting` (a switch under the plugin in Settings → Plugins, stored by binnacle), `guardSource` (the prefix of an external guard's denials, shown in Activity and Permissions under its source), and tab rows with aligned `cols`, pressed rows and row `buttons`. binnacle tells a plugin through `binnacle.notify` when the person presses, toggles or opens something of its. Limits, cleaning and the rules for handling a notice are in [docs/plugins.md](docs/plugins.md).

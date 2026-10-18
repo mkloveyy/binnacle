@@ -3,7 +3,7 @@ import { DEFAULT_SETTINGS } from '../hooks/core/settings.ts'
 import { buildGroups } from '../hooks/modules/status/segments.ts'
 import { fit } from '../hooks/modules/status/layout.ts'
 import type { BinnacleButton, BinnacleGuardSource, BinnacleLine, BinnacleSegment, BinnacleSettingItem } from '../types'
-import { cleanSpans, guardSourceOf, layoutTab, pickForm, pluginsIn, emptyRegistry, segmentGroup, setButton, setGuardSource, setLine, setSegment, setSetting, toNodes } from '../hooks/modules/ext/ext.ts'
+import { cleanSpans, guardSourceOf, layoutTab, pickForm, pluginsIn, emptyRegistry, segmentGroup, setButton, setGuardSource, setLine, setSegment, setSetting, setTab, toNodes } from '../hooks/modules/ext/ext.ts'
 import { flatten } from '../hooks/modules/activity/tree.ts'
 
 const ok = <T>(r: { ok: true; list: T[] } | { ok: false; reason: string }): T[] => {
@@ -110,9 +110,9 @@ describe('guard sources', () => {
   })
 })
 
-test('pluginsIn lists every plugin once, first seen first', () => {
+test('pluginsIn lists every plugin once, by name', () => {
   const r = { ...emptyRegistry(), buttons: [{ plugin: 'b', id: '1', label: 'x' }], settings: [{ plugin: 'a', id: '1', title: 't', def: true }, { plugin: 'b', id: '2', title: 't', def: true }] }
-  expect(pluginsIn(r)).toEqual(['b', 'a'])
+  expect(pluginsIn(r)).toEqual(['a', 'b'])
 })
 
 test('fit drops the plugin group before it shortens any of binnacle\'s own', () => {
@@ -142,4 +142,17 @@ test('a tab lines up the rows of one level that have the same number of cells; a
   expect(lines[1]).toMatch(/alpha\s+millennium\s+6-review\s+manual\s+2d$/)
   expect(lines[2]).toMatch(/beta two\s+eternal\s+4-release\s+auto\s+13d$/)
   expect(lines[1]?.length).toBe(lines[2]?.length)
+})
+
+test('registrations are kept in plugin-name order, each plugin\'s own in the order it made them, whatever order the plugins load in', () => {
+  let list: BinnacleButton[] = []
+  for (const [plugin, id] of [['zeta', 'z1'], ['alpha', 'a1'], ['mid', 'm1'], ['alpha', 'a2']] as const) list = ok(setButton(list, plugin, { id, label: id }))
+  expect(list.map(b => `${b.plugin}/${b.id}`)).toEqual(['alpha/a1', 'alpha/a2', 'mid/m1', 'zeta/z1'])
+  // Replacing keeps the place; a removed one leaves the rest in order.
+  list = ok(setButton(list, 'alpha', { id: 'a1', label: 'A1' }))
+  expect(list.map(b => b.label)).toEqual(['A1', 'a2', 'm1', 'z1'])
+  expect(ok(setButton(list, 'mid', { id: 'm1', label: '' })).map(b => b.id)).toEqual(['a1', 'a2', 'z1'])
+  let tabs = ok(setTab([], 'zeta', { id: 't', title: 'Z', rows: [{ text: 'z' }] }))
+  tabs = ok(setTab(tabs, 'alpha', { id: 't', title: 'A', rows: [{ text: 'a' }] }))
+  expect(tabs.map(t => t.plugin)).toEqual(['alpha', 'zeta'])
 })

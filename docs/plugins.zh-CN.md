@@ -60,6 +60,8 @@ binnacle 不知道装了哪些插件。它按 Claude Code 提供的调用方名�
 | `guardSource` | `{ prefix, source }` → `{ ok }` | 拒绝原因形如 `<prefix><规则> · <说明>`（规则名匹配 `[a-z][a-z-]*`）时，Activity 和 Permissions 里把它显示为来自 `source` | 3 个；prefix 3–40 字符，不能以 `binnacle` 开头，每个 prefix 只能有一个插件登记 |
 | `register`、`enabled`、`ask`、`record`、`shell` | 见示例规则包 | 给 binnacle 守卫用的规则：在 Settings 里列出规则、查询规则是否开启、询问用户、记录决定、拆分 shell 命令 | — |
 
+插件加的东西按插件名排序，同一个插件的按注册先后排。插件的加载顺序取决于每个人的配置，所以不会影响按钮、页签（及其快捷键）的位置。
+
 显示条件：
 - 状态段和整行：binnacle 状态行开着时才显示；
 - 按钮：binnacle 状态行或守卫有一个开着就显示。

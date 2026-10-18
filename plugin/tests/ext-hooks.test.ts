@@ -1,5 +1,6 @@
 import { expect, mock, test } from 'claude-code/testing'
 import type { Plugin } from 'claude-code/testing'
+import { VERSION } from '../hooks/core/settings.ts'
 
 const USAGE = { value: { startedAt: 0, context: { window: 1_000_000, tokens: 1_000, percent: 0.1 }, rateLimits: [] } }
 const MODE = { component: 'SessionMode' as const, props: { modes: [] as string[] } }
@@ -33,7 +34,7 @@ test('a plugin button sits in the footer, survives /clear, and a press tells its
   const toasts: string[] = []
   on('ui.toast', (_$, e) => { toasts.push(e.text); return { value: undefined } })
   await $.session.start({ cwd: '/repo', surface: 'terminal', isInteractive: true })
-  expect(toasts).toContain('btny sees api 1 binnacle 0.6.0')
+  expect(toasts).toContain(`btny sees api 1 binnacle ${VERSION}`)
   // /clear: session.end, and no session.start after it (spec F21).
   await $.session.end({ reason: 'clear', sessionId: 's1', resume: { id: 's1' } })
   const mode = await $.ui.mount({ plugin: 'binnacle', surface: 'terminal', ...MODE })

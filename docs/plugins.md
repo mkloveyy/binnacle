@@ -48,7 +48,7 @@ Every call is rejected (the promise rejects) when an argument is wrong or a limi
 | `guardSource` | `{ prefix, source }` → `{ ok }` | Your guard's denials (reasons that read `<prefix><rule> · <text>`, rule `[a-z][a-z-]*`) are shown in Activity and Permissions under `source` | 3; prefix 3–40 characters, not `binnacle…`, one owner |
 | `register`, `enabled`, `ask`, `record`, `shell` | see the rule pack | Rules for binnacle's guard: list a rule in Settings, ask whether it is on, ask the person, record a decision, split a shell command | — |
 
-Segments and lines show while binnacle's status line is on; buttons while its status line or its guard is on. The person can turn everything a plugin added off in Settings → Plugins (its settings stay there, to turn it back on).
+Everything plugins add is ordered by plugin name, each plugin's own items in the order it added them: the order plugins load in depends on each person's setup, so it never decides where a button or a tab (and its hotkey) goes. Segments and lines show while binnacle's status line is on; buttons while its status line or its guard is on. The person can turn everything a plugin added off in Settings → Plugins (its settings stay there, to turn it back on).
 
 **Tab rows.** `{ id?, text?, color?, dim?, bold?, cols?, press?, buttons?, children? }`:
 
