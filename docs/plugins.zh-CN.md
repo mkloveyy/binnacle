@@ -68,12 +68,14 @@ binnacle 不知道装了哪些插件。它按 Claude Code 提供的调用方名�
 
 用户可以在 Settings → Plugins 里把某个插件加的东西全部关掉。这个插件的设置项仍然留在那里，方便再打开。
 
-**页签的行**结构是 `{ id?, text?, color?, dim?, bold?, cols?, press?, buttons?, children? }`：
+**页签的行**结构是 `{ id?, text?, color?, dim?, bold?, cols?, press?, buttons?, children?, indent? }`：
 
 - `cols`：最多 6 个单元格，每个是一组 span。同一层、单元格数相同的行之间右对齐，宽度不够时先截断 text。
 - `press: true`（必须同时有 `id`）：整行就是一个按钮，点击发 `{ kind: 'press', id }`。
 - `buttons`：最多 6 个 `{ id, label }`（label 20 列），点击发 `{ kind: 'press', id, row }`，`row` 是这一行的 id。只有按钮、没有 text 的行会画成一排按钮。
-- `children`：下一级的行，展开/折叠由 binnacle 处理。
+- `children`：下一级的行，展开/折叠由 binnacle 处理。带唯一 `id` 的行，上方的行增减时仍保持展开。
+- `indent`：`1` 或 `2`，每级 2 列（binnacle 0.6.3 起）。文字会被清洗成一行，自己加的空格排不了版，要缩进就用 `indent`。只有按钮的行和文字行从同一列开始，也跟着 `indent` 缩进。
+- 什么都没有的行（没有 text、cols、buttons、children）画成一个空行，用来分隔各节（binnacle 0.6.3 起；更早的版本不画）。
 
 ## 4. 接收通知：`binnacle.notify`
 

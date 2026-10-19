@@ -145,6 +145,11 @@ export type BinnacleTabRow = {
   /** At most 6; a press notifies `{ kind: 'press', id: button id, row: row id }`. */
   buttons?: { id: string; label: string }[]
   children?: BinnacleTabRow[]
+  /**
+   * One or two levels in (two columns each), added after the text is cleaned: a row of buttons moves with its text.
+   * A row with nothing in it (no text, cols, buttons or children) is a blank line between sections.
+   */
+  indent?: 1 | 2
 }
 
 export type BinnacleExtTab = { plugin: string; id: string; title: string; rows: BinnacleTabRow[] }

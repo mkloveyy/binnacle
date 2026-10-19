@@ -1,6 +1,6 @@
 {
   "name": "binnacle",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "All-in-one Claude Code mod: an adaptive status line whose model and effort open Claude Code's pickers, guards for risky commands, a record of what each turn and agent did, transcript search, and an interface for plugins.",
   "author": { "name": "Mark" },
   "license": "MIT",

@@ -9,7 +9,7 @@ import { clip, visible } from './mask.ts'
 
 /** `text` and `color` are the row as one line (details, plugin tabs, tests); `row` is how the Activity tab lays it out. */
 /** What a plugin's tab row adds (binnacle spec 2026-10-16 §4.4): its id, whether the row is pressed, its buttons. */
-export type ExtRow = { id?: string; press: boolean; buttons: { id: string; label: string }[] }
+export type ExtRow = { id?: string; press: boolean; buttons: { id: string; label: string }[]; indent?: number }
 export type TreeNode = { key: string; text: string; color?: string; dim?: boolean; bold?: boolean; detail?: string[]; children?: TreeNode[]; row?: Row; ext?: ExtRow }
 export type FlatRow = { key: string; depth: number; text: string; color?: string; dim?: boolean; bold?: boolean; hasChildren: boolean; isOpen: boolean; row?: Row; ext?: ExtRow }
 
@@ -293,7 +293,8 @@ export const rowLabel = (r: FlatRow): string => `${'  '.repeat(r.depth)}${r.hasC
 export function treeRow(r: FlatRow): Row {
   const toggle = r.hasChildren ? (r.isOpen ? `${SYM.open} ` : `${SYM.closed} `) : r.depth === 0 ? '  ' : ''
   const base = r.row ?? { lead: [{ text: r.text, color: r.color, bold: r.bold, dim: r.dim }] }
-  return { ...base, lead: [{ text: ' '.repeat(5 * r.depth) + toggle }, ...base.lead] }
+  // A plugin row's indent (BinnacleTabRow.indent) goes after the toggle: its text is cleaned, so spaces of its own would be lost.
+  return { ...base, lead: [{ text: ' '.repeat(5 * r.depth) + toggle + '  '.repeat(r.ext?.indent ?? 0) }, ...base.lead] }
 }
 
 /**

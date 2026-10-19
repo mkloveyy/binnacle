@@ -50,12 +50,14 @@ Every call is rejected (the promise rejects) when an argument is wrong or a limi
 
 Everything plugins add is ordered by plugin name, each plugin's own items in the order it added them: the order plugins load in depends on each person's setup, so it never decides where a button or a tab (and its hotkey) goes. Segments and lines show while binnacle's status line is on; buttons while its status line or its guard is on. The person can turn everything a plugin added off in Settings → Plugins (its settings stay there, to turn it back on).
 
-**Tab rows.** `{ id?, text?, color?, dim?, bold?, cols?, press?, buttons?, children? }`:
+**Tab rows.** `{ id?, text?, color?, dim?, bold?, cols?, press?, buttons?, children?, indent? }`:
 
 - `cols`: up to 6 cells of spans, right-aligned across the rows of one level that have the same number of cells; the text is cut first.
 - `press: true` (with an `id`): the whole row is a button; a press notifies `{ kind: 'press', id }`.
 - `buttons`: up to 6 `{ id, label }` (20 columns); a press notifies `{ kind: 'press', id, row }` with the row's id. A row with buttons and no text is drawn as a row of buttons.
-- `children`: rows under it; binnacle draws the toggle.
+- `children`: rows under it; binnacle draws the toggle. A row with a unique `id` stays open when rows above it come or go.
+- `indent`: `1` or `2`, two columns per level (binnacle ≥ 0.6.3). Text is cleaned to one line, so spaces of your own never lay a row out: use `indent`. A row of buttons starts where text does and moves with its indent.
+- A row with nothing in it (no text, cols, buttons or children) is a blank line between sections (binnacle ≥ 0.6.3; an older binnacle draws nothing for it).
 
 ## 4. Hearing back: `binnacle.notify`
 

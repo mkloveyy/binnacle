@@ -87,6 +87,7 @@ export function capNodes(rows: readonly BinnacleTabRow[], max = MAX_NODES): { ro
       if (typeof r.color === 'string' && COLOR.test(r.color)) row.color = r.color
       if (r.dim === true) row.dim = true
       if (r.bold === true) row.bold = true
+      if (r.indent === 1 || r.indent === 2) row.indent = r.indent
       const cols = Array.isArray(r.cols) ? r.cols.slice(0, MAX_COLS).map(c => cleanSpans(c, COL_CHARS)) : []
       if (cols.some(c => c.length > 0)) row.cols = cols
       if (r.press === true && row.id !== undefined) row.press = true
@@ -136,7 +137,7 @@ export const toNodes = (rows: readonly BinnacleTabRow[], prefix: string): TreeNo
       key, text, color: r.color, dim: r.dim, bold: r.bold,
       // With cols the text is the body, cut first; the cells are right-aligned across the level (layoutRows).
       ...(r.cols?.length ? { row: { lead: [], body: text, bodyColor: r.color, nums: r.cols } } : {}),
-      ...(r.id !== undefined || r.buttons?.length ? { ext: { id: r.id, press: r.press === true, buttons: r.buttons ?? [] } } : {}),
+      ...(r.id !== undefined || r.buttons?.length || r.indent ? { ext: { id: r.id, press: r.press === true, buttons: r.buttons ?? [], ...(r.indent ? { indent: r.indent } : {}) } } : {}),
       children: r.children?.length ? toNodes(r.children, key) : undefined,
     }
   })

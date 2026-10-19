@@ -216,3 +216,39 @@ test('with the status line off, a plugin turned off stays off in the footer afte
   expect(await mode.find({ key: 'ext-btn-btny-go' })).toBeUndefined()
   await mode.unmount()
 })
+
+const LAY: Plugin = {
+  name: 'lay',
+  register(on) {
+    on('session.start', async ($, e, next) => {
+      const r = await next(e)
+      await $.binnacle.tab({ id: 't', title: 'Lay', rows: [
+        { text: 'Card', bold: true },
+        { id: 'body', text: 'body line', indent: 1 },
+        { id: 'deep', text: 'deeper', indent: 2 },
+        { id: 'bar', buttons: [{ id: 'go', label: 'Go' }] },
+        { id: 'subbar', indent: 1, buttons: [{ id: 'run', label: 'Run' }] },
+        { id: 'gap' },
+        { text: 'Next section', bold: true },
+      ] } as never)
+      return r
+    })
+  },
+}
+
+test('a tab row: indent puts it one or two levels in, a row of buttons starts with the text, an empty row is a blank line', { plugins: [LAY] }, async ($, on) => {
+  mock.clock(on)
+  mock.store(on)
+  on('session.usage', () => USAGE as never)
+  on('session.start', (_$, e) => ({ cwd: e.cwd }))
+  on('command.register', () => ({ value: { command: 'binnacle' } }))
+  await $.session.start({ cwd: '/repo', surface: 'terminal', isInteractive: true })
+  const ui = await $.ui.mount({ plugin: 'binnacle', surface: 'terminal', ...PANE })
+  await ui.press({ key: 'tab-ext:lay/t' })
+  expect((await ui.find({ key: 'node-ext:lay/t/#body' }))?.text).toBe('    body line')
+  expect((await ui.find({ key: 'node-ext:lay/t/#deep' }))?.text).toBe('      deeper')
+  expect((await ui.find({ key: 'node-ext:lay/t/#bar' }))?.props.marginLeft).toBe(2)
+  expect((await ui.find({ key: 'node-ext:lay/t/#subbar' }))?.props.marginLeft).toBe(4)
+  expect((await ui.find({ key: 'node-ext:lay/t/#gap' }))?.props.height).toBe(1)
+  await ui.unmount()
+})

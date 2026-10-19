@@ -61,6 +61,11 @@ describe('tabs', () => {
     const dup = toNodes([{ id: 'a', text: '1' }, { id: 'a', text: '2' }], 'ext:p/t')
     expect(dup.map(n => n.key)).toEqual(['ext:p/t/0', 'ext:p/t/1'])
   })
+  test('indent is kept as 1 or 2, anything else dropped; an empty row stays (a blank line)', () => {
+    const { rows } = capNodes([{ text: 'a', indent: 1 }, { text: 'b', indent: 2 }, { text: 'c', indent: 3 }, { text: 'd', indent: 'x' }, {}] as never)
+    expect(rows.map(r => r.indent)).toEqual([1, 2, undefined, undefined, undefined])
+    expect(rows[4]).toEqual({ text: '' })
+  })
   test('rows keep id, cols, press and buttons, cleaned and capped', () => {
     const { rows } = capNodes([{
       id: 'r1', text: 'row', press: true,

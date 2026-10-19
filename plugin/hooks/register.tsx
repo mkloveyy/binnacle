@@ -1564,7 +1564,10 @@ export const register: Register = (on, options) => {
               const buttons = (x?.buttons ?? []).map(b => (
                 <Button key={`ext-rb-${r.key}-${b.id}`} label={printable(b.label)} onPress={() => press(b.id, x?.id)} />
               ))
-              if (r.text === '' && buttons.length) return <Box key={`node-${r.key}`} flexDirection="row" columnGap={1} flexWrap="wrap">{buttons}</Box>
+              // A row of buttons starts where a text row's text does (and moves with its indent); an empty row is a blank line.
+              const lead = 5 * r.depth + (r.depth === 0 ? 2 : 0) + 2 * (x?.indent ?? 0)
+              if (r.text === '' && buttons.length) return <Box key={`node-${r.key}`} flexDirection="row" columnGap={1} flexWrap="wrap" marginLeft={lead}>{buttons}</Box>
+              if (r.text === '' && !buttons.length && !r.hasChildren && !r.row) return <Box key={`node-${r.key}`} height={1} />
               const id = x?.press ? x.id : undefined
               const body = r.hasChildren
                 ? rowButton(`node-${r.key}`, spans, () => void pressExtNode($, r.key))

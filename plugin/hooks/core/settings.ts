@@ -64,7 +64,7 @@ export const setLineage = (s: BinnacleSettings, lineage: boolean): BinnacleSetti
 export const pluginEnabled = (s: BinnacleSettings, name: string): boolean => s.plugins[name] !== false
 
 /** binnacle's version, as `$.binnacle.version()` reports it; kept equal to plugin.json's. */
-export const VERSION = '0.6.2'
+export const VERSION = '0.6.3'
 
 const settingKey = (plugin: string, id: string): string => `${plugin}/${id}`
 

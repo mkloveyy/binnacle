@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.3
+
+- **Plugin tab rows can be laid out:** `indent` (1 or 2, two columns per level) puts a row one or two levels in, after its text is cleaned to one line, so a plugin no longer loses its spaces. A row of buttons now starts where a text row's text does, and moves with its indent. A row with nothing in it is a blank line between sections.
+
 ## 0.6.2
 
 - **A plugin tab's row with an id stays open when rows above it come or go:** a row is remembered open by its id when no sibling shares it (by its place otherwise, as before). A folded group under a card whose height changes no longer closes itself.
