@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.2
+
+- **A plugin tab's row with an id stays open when rows above it come or go:** a row is remembered open by its id when no sibling shares it (by its place otherwise, as before). A folded group under a card whose height changes no longer closes itself.
+
 ## 0.6.1
 
 - **Plugins' buttons, tabs, parts and lines are ordered by plugin name**, each plugin's own in the order it added them. Plugins load in an order each person's setup decides (measured: the reverse of the `--plugin-dir` order), so a tab's hotkey could change between sessions; Settings → Plugins lists them by name too.

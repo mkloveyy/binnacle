@@ -123,9 +123,14 @@ export function setTab(list: BinnacleExtTab[], plugin: string, args: { id: strin
 
 export const tabKey = (t: { plugin: string; id: string }): `ext:${string}` => `ext:${t.plugin}/${t.id}`
 
+/**
+ * A row's key (what remembers it open): its id when no sibling shares it, so rows added or removed above it keep it
+ * open; else its place.
+ */
 export const toNodes = (rows: readonly BinnacleTabRow[], prefix: string): TreeNode[] =>
   rows.map((r, i) => {
-    const key = `${prefix}/${i}`
+    const unique = r.id !== undefined && rows.filter(x => x.id === r.id).length === 1
+    const key = unique ? `${prefix}/#${r.id}` : `${prefix}/${i}`
     const text = r.text ?? ''
     return {
       key, text, color: r.color, dim: r.dim, bold: r.bold,

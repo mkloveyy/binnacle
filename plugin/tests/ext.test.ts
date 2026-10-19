@@ -52,6 +52,15 @@ describe('tabs', () => {
     expect(n[0]?.key).toBe('ext:p/t/0')
     expect(n[0]?.children?.[0]).toMatchObject({ key: 'ext:p/t/0/0', text: 'l', color: 'green' })
   })
+  test('a row with an id unique among its siblings is keyed by the id, so rows added above it keep it open', () => {
+    const before = toNodes([{ text: 'card' }, { id: 'done', text: 'Finished', children: [{ text: 'x' }] }], 'ext:p/t')
+    const after = toNodes([{ text: 'card' }, { text: 'more' }, { text: 'rows' }, { id: 'done', text: 'Finished', children: [{ text: 'x' }] }], 'ext:p/t')
+    expect(after[3]?.key).toBe(before[1]?.key)
+    expect(after[3]?.key).toBe('ext:p/t/#done')
+    expect(after[3]?.children?.[0]?.key).toBe('ext:p/t/#done/0')
+    const dup = toNodes([{ id: 'a', text: '1' }, { id: 'a', text: '2' }], 'ext:p/t')
+    expect(dup.map(n => n.key)).toEqual(['ext:p/t/0', 'ext:p/t/1'])
+  })
   test('rows keep id, cols, press and buttons, cleaned and capped', () => {
     const { rows } = capNodes([{
       id: 'r1', text: 'row', press: true,
